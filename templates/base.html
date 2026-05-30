@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}B2Study - School Study Platform{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Navigation -->
+    {% if 'user_id' in session %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-dark shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="{{ url_for('dashboard') }}">
+                <i class="bi bi-book-half"></i> B2Study
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="materialsDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-book"></i> Resources
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="materialsDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('syllabus_list') }}">Syllabuses</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('materials_list') }}">Study Materials</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('notes_list') }}">Notes</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('pyq_list') }}">PYQs</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('notices') }}">
+                            <i class="bi bi-megaphone"></i> Notices
+                        </a>
+                    </li>
+                    {% if session['role'] == 'admin' %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-gear"></i> Admin
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('admin_panel') }}">Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('upload_syllabus') }}">Upload Syllabus</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('upload_material') }}">Upload Material</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('add_notes') }}">Add Notes</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('upload_pyq') }}">Upload PYQ</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('post_notice') }}">Post Notice</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('manage_users') }}">Users</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('export_page') }}">Export Data</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ session['username'] }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main class="flex-grow-1">
+        <div class="container-fluid py-4">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        {% if category == 'error' %}
+                        <i class="bi bi-exclamation-circle"></i>
+                        {% elif category == 'success' %}
+                        <i class="bi bi-check-circle"></i>
+                        {% elif category == 'warning' %}
+                        <i class="bi bi-exclamation-triangle"></i>
+                        {% else %}
+                        <i class="bi bi-info-circle"></i>
+                        {% endif %}
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-5 mt-5 border-top border-secondary">
+        <div class="container-fluid">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h5 class="mb-3">
+                        <i class="bi bi-book-half text-primary"></i> B2Study
+                    </h5>
+                    <p class="text-muted">Your complete school study platform for syllabuses, notes, materials, and previous year questions.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="mb-3">Quick Links</h5>
+                    <ul class="list-unstyled text-muted">
+                        <li><a href="{{ url_for('syllabus_list') }}" class="text-decoration-none text-muted">Syllabuses</a></li>
+                        <li><a href="{{ url_for('notes_list') }}" class="text-decoration-none text-muted">Notes</a></li>
+                        <li><a href="{{ url_for('pyq_list') }}" class="text-decoration-none text-muted">PYQs</a></li>
+                        <li><a href="{{ url_for('notices') }}" class="text-decoration-none text-muted">Notices</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="mb-3">Follow Us</h5>
+                    <div class="d-flex gap-3">
+                        {% if config.SOCIAL_LINKS.instagram != '#' %}
+                        <a href="{{ config.SOCIAL_LINKS.instagram }}" class="text-muted text-decoration-none" target="_blank">
+                            <i class="bi bi-instagram fs-5"></i>
+                        </a>
+                        {% endif %}
+                        {% if config.SOCIAL_LINKS.linkedin != '#' %}
+                        <a href="{{ config.SOCIAL_LINKS.linkedin }}" class="text-muted text-decoration-none" target="_blank">
+                            <i class="bi bi-linkedin fs-5"></i>
+                        </a>
+                        {% endif %}
+                        {% if config.SOCIAL_LINKS.github != '#' %}
+                        <a href="{{ config.SOCIAL_LINKS.github }}" class="text-muted text-decoration-none" target="_blank">
+                            <i class="bi bi-github fs-5"></i>
+                        </a>
+                        {% endif %}
+                        {% if config.SOCIAL_LINKS.twitter != '#' %}
+                        <a href="{{ config.SOCIAL_LINKS.twitter }}" class="text-muted text-decoration-none" target="_blank">
+                            <i class="bi bi-twitter fs-5"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <hr class="border-secondary my-4">
+            <div class="row">
+                <div class="col-12 text-center text-muted">
+                    <p class="mb-0">&copy; 2024 B2Study. All rights reserved. | Designed with <i class="bi bi-heart-fill text-danger"></i> by Nidhi Kumari</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

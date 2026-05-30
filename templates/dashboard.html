@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - B2Study{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0">
+                <i class="bi bi-speedometer2"></i> Welcome, {{ user.name }}!
+            </h1>
+        </div>
+    </div>
+</div>
+
+{% if user.is_admin() %}
+<!-- Admin Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 stats-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon bg-primary">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ms-3">
+                        <p class="text-muted mb-1">Total Students</p>
+                        <h3 class="mb-0">{{ stats.total_students }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 stats-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon bg-success">
+                        <i class="bi bi-file-text"></i>
+                    </div>
+                    <div class="ms-3">
+                        <p class="text-muted mb-1">Materials</p>
+                        <h3 class="mb-0">{{ stats.total_materials }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 stats-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon bg-info">
+                        <i class="bi bi-bookmark"></i>
+                    </div>
+                    <div class="ms-3">
+                        <p class="text-muted mb-1">Notes</p>
+                        <h3 class="mb-0">{{ stats.total_notes }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 stats-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon bg-warning">
+                        <i class="bi bi-question-circle"></i>
+                    </div>
+                    <div class="ms-3">
+                        <p class="text-muted mb-1">PYQs</p>
+                        <h3 class="mb-0">{{ stats.total_pyqs }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Recent Notices -->
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-light border-0">
+                <h5 class="mb-0">
+                    <i class="bi bi-megaphone text-primary"></i> Recent Notices
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                {% if notices %}
+                <div class="list-group list-group-flush">
+                    {% for notice in notices %}
+                    <div class="list-group-item p-3 border-0">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">
+                                    {% if notice.is_important %}
+                                    <span class="badge bg-danger me-2">Important</span>
+                                    {% endif %}
+                                    {{ notice.title }}
+                                </h6>
+                                <p class="text-muted small mb-0">{{ notice.content[:100] }}...</p>
+                            </div>
+                            <small class="text-muted">{{ notice.created_at.strftime('%b %d') }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="text-center p-3">
+                    <a href="{{ url_for('notices') }}" class="btn btn-sm btn-outline-primary">View All Notices</a>
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-4 mb-0">No notices available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Materials -->
+<div class="row g-3">
+    <div class="col-12">
+        <h5 class="mb-3">
+            <i class="bi bi-star"></i> Featured Materials
+        </h5>
+    </div>
+    {% if materials %}
+        {% for material in materials %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 hover-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="card-title mb-0">{{ material.title }}</h6>
+                        <span class="badge bg-primary">{{ material.material_type }}</span>
+                    </div>
+                    <p class="text-muted small mb-2">{{ material.subject }}</p>
+                    <p class="text-muted small">{{ material.description[:60] if material.description else 'No description' }}...</p>
+                    <div class="mt-3">
+                        <a href="{{ url_for('download_material', material_id=material.id) }}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-download"></i> Download
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer bg-light border-0 text-muted small">
+                    <i class="bi bi-calendar"></i> {{ material.created_at.strftime('%b %d, %Y') }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="col-12">
+        <p class="text-muted text-center">No materials available yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
