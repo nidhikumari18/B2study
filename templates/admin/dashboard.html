@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - B2Study{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-0">
+            <i class="bi bi-speedometer2"></i> Admin Dashboard
+        </h1>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm stats-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon bg-primary">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ms-3">
+                        <p class="text-muted mb-1">Total Students</p>
+                        <h3 class="mb-0">{{ stats.total_students }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm stats-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon bg-success">
+                        <i class="bi bi-download"></i>
+                    </div>
+                    <div class="ms-3">
+                        <p class="text-muted mb-1">Total Downloads</p>
+                        <h3 class="mb-0">{{ stats.total_downloads }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm stats-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon bg-info">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div class="ms-3">
+                        <p class="text-muted mb-1">Login Records</p>
+                        <h3 class="mb-0">{{ stats.total_logins }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Content Statistics -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <h6 class="text-muted mb-2">Study Materials</h6>
+                <h2 class="mb-0">{{ stats.total_materials }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <h6 class="text-muted mb-2">Notes</h6>
+                <h2 class="mb-0">{{ stats.total_notes }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <h6 class="text-muted mb-2">Previous Year Questions</h6>
+                <h2 class="mb-0">{{ stats.total_pyqs }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <h6 class="text-muted mb-2">Notices</h6>
+                <h2 class="mb-0">{{ stats.total_notices }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Logins -->
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-light border-0">
+                <h5 class="mb-0">Recent Logins</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_logins %}
+                <div class="list-group list-group-flush">
+                    {% for login in recent_logins %}
+                    <div class="list-group-item p-3 border-0">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <p class="mb-1 fw-500">{{ login.user.email }}</p>
+                                <small class="text-muted">{{ login.ip_address or 'N/A' }}</small>
+                            </div>
+                            <small class="text-muted">{{ login.login_time.strftime('%H:%M') }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted p-3 mb-0">No logins yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Downloads -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-light border-0">
+                <h5 class="mb-0">Recent Downloads</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_downloads %}
+                <div class="list-group list-group-flush">
+                    {% for download in recent_downloads %}
+                    <div class="list-group-item p-3 border-0">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <p class="mb-1 fw-500">{{ download.file_name }}</p>
+                                <small class="text-muted">{{ download.user.email }}</small>
+                            </div>
+                            <small class="text-muted">{{ download.download_time.strftime('%H:%M') }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted p-3 mb-0">No downloads yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

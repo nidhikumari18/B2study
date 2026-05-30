@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Post Notice - B2Study{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <h1 class="h3 mb-4">
+            <i class="bi bi-megaphone"></i> Post a Notice
+        </h1>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="title" class="form-label fw-500">Title <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="title" name="title" placeholder="Enter notice title" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="content" class="form-label fw-500">Content <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="content" name="content" rows="6" placeholder="Enter notice content" required></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="category" class="form-label fw-500">Category</label>
+                            <select class="form-select" id="category" name="category">
+                                <option value="general" selected>General</option>
+                                <option value="academic">Academic</option>
+                                <option value="event">Event</option>
+                                <option value="holiday">Holiday</option>
+                                <option value="urgent">Urgent</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="expires_at" class="form-label fw-500">Expiration Date (Optional)</label>
+                            <input type="datetime-local" class="form-control" id="expires_at" name="expires_at">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="is_important" name="is_important">
+                            <label class="form-check-label" for="is_important">
+                                Mark as Important
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle"></i> Post Notice
+                        </button>
+                        <a href="{{ url_for('notices') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Notices - B2Study{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0">
+                <i class="bi bi-megaphone"></i> Notices & Announcements
+            </h1>
+            {% if session['role'] == 'admin' %}
+            <a href="{{ url_for('post_notice') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Post Notice
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Filter by Category -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <form method="GET">
+            <select name="category" class="form-select" onchange="this.form.submit()">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                <option value="{{ cat }}" {% if cat == current_category %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+</div>
+
+<!-- Notices List -->
+<div class="row">
+    <div class="col-12">
+        {% if notices.items %}
+            {% for notice in notices.items %}
+            <div class="card border-0 shadow-sm mb-3 hover-card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-10">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                {% if notice.is_important %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-exclamation-circle"></i> Important
+                                </span>
+                                {% endif %}
+                                <span class="badge bg-info">{{ notice.category }}</span>
+                            </div>
+                            <h5 class="card-title mb-2">{{ notice.title }}</h5>
+                            <p class="card-text text-muted">{{ notice.content }}</p>
+                        </div>
+                        <div class="col-md-2 text-md-end">
+                            <small class="text-muted d-block">
+                                <i class="bi bi-calendar"></i> {{ notice.created_at.strftime('%b %d, %Y') }}
+                            </small>
+                            {% if notice.expires_at %}
+                            <small class="text-warning d-block">
+                                Expires: {{ notice.expires_at.strftime('%b %d') }}
+                            </small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle"></i> No notices available.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if notices.pages > 1 %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if notices.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('notices', page=notices.prev_num) }}">Previous</a>
+        </li>
+        {% endif %}
+        {% for page_num in notices.iter_pages() %}
+            {% if page_num %}
+                {% if page_num == notices.page %}
+                <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('notices', page=page_num) }}">{{ page_num }}</a></li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        {% if notices.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('notices', page=notices.next_num) }}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

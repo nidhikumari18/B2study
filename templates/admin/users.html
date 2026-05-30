@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users - B2Study{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-0">
+            <i class="bi bi-people"></i> Manage Users
+        </h1>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Enrollment</th>
+                        <th>Branch</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users.items %}
+                    <tr>
+                        <td>
+                            <strong>{{ user.name }}</strong>
+                        </td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.enrollment_number or '-' }}</td>
+                        <td>{{ user.branch or '-' }}</td>
+                        <td>
+                            <span class="badge bg-{% if user.is_admin() %}danger{% else %}primary{% endif %}">
+                                {{ user.role }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if user.is_active %}
+                            <span class="badge bg-success">Active</span>
+                            {% else %}
+                            <span class="badge bg-danger">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ user.created_at.strftime('%b %d, %Y') }}</small>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-warning toggle-user" data-user-id="{{ user.id }}">
+                                {% if user.is_active %}
+                                <i class="bi bi-lock"></i> Deactivate
+                                {% else %}
+                                <i class="bi bi-unlock"></i> Activate
+                                {% endif %}
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if users.pages > 1 %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if users.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('manage_users', page=users.prev_num) }}">Previous</a>
+        </li>
+        {% endif %}
+        {% for page_num in users.iter_pages() %}
+            {% if page_num %}
+                {% if page_num == users.page %}
+                <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('manage_users', page=page_num) }}">{{ page_num }}</a></li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        {% if users.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('manage_users', page=users.next_num) }}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+<script>
+document.querySelectorAll('.toggle-user').forEach(button => {
+    button.addEventListener('click', async function() {
+        const userId = this.dataset.userId;
+        try {
+            const response = await fetch(`/admin/user/${userId}/toggle`, {
+                method: 'POST'
+            });
+            if (response.ok) {
+                location.reload();
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    });
+});
+</script>
+{% endblock %}

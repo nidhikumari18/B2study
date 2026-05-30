@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Export Data - B2Study{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3 mb-0">
+            <i class="bi bi-download"></i> Export Data
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light border-0">
+                <h5 class="mb-0">Student Registrations</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-3">Export all student registration data with contact information and enrollment details.</p>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('export_students', format='csv') }}" class="btn btn-outline-primary flex-grow-1">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> CSV
+                    </a>
+                    <a href="{{ url_for('export_students', format='excel') }}" class="btn btn-outline-success flex-grow-1">
+                        <i class="bi bi-file-earmark-excel"></i> Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-light border-0">
+                <h5 class="mb-0">Login Records</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-3">Export user login history including timestamps, IP addresses, and session details.</p>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('export_logins', format='csv') }}" class="btn btn-outline-primary flex-grow-1">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> CSV
+                    </a>
+                    <a href="{{ url_for('export_logins', format='excel') }}" class="btn btn-outline-success flex-grow-1">
+                        <i class="bi bi-file-earmark-excel"></i> Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i>
+    <strong>Tip:</strong> Use these exports for reporting, analytics, and data analysis. Files are generated in real-time and include all current records.
+</div>
+{% endblock %}
